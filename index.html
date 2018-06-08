@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title></title>
+	<!-- 引入 ECharts 文件 -->
+    <script src="js/echarts.js"></script>
+    <script src="js/china.js"></script>
+    <script src="js/jquery.min.js"></script>
+</head>
+<body style="padding: 0;margin: 0;">
+<div  id="main1" style="width: 100%;height:100%;background: url('images/bg.png');background-repeat:no-repeat; background-position: center center;background-size: cover;">
+	<center><div style="color: #fff;font-size: 30pt;padding-top: 80px">踏足中国
+		<span style="color: #fac72d;font-size: 40pt; ">5</span>个省市</div></center>
+
+	<div id="main" style="width: 900px;height:700px;margin-top: -10px;"></div>
+
+	<div id="cityname" style="color: #fff;font-size: 40pt;padding: 0 50px 0 50px" >
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+	var w = document.documentElement.clientWidth || document.body.clientWidth;
+    var h = document.documentElement.clientHeight || document.body.clientHeight;
+    $("#main").css({
+    	"width": w + "px",
+    	"height": (h-h/2) + "px"
+    });
+    $("#main1").css({
+    	"width": w + "px",
+    	"height": h + "px"
+    });
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+     function reflushMap(provinceArray) {
+    	   // 指定图表的配置项和数据
+		    var option = {
+			    title : {
+			        // text: 'iphone销量',
+			        // subtext: '纯属虚构',
+			        // left: 'center'
+			    },
+			    geo: {
+			        map: 'china',
+			        label: {
+			            emphasis: {
+			                show: false
+			            }
+			        },
+			        left:"5%",
+			        right:"5%",
+			        itemStyle: {
+			            normal: {
+			                areaColor: '#a19fa2',
+			                borderColor: '#fff',
+			                borderWidth: 1
+			            },
+			            emphasis: {
+			                areaColor: '#a19fa2'
+			            }
+			        },
+			        regions: []
+			    }
+			};
+
+			var regions = new Array();
+			for (var i = 0; i < provinceArray.length; i++) {
+				var rr = {
+				    name: provinceArray[i],
+				    itemStyle: {
+				        areaColor: '#fac72d',
+				        color: '#fac72d'
+				    }
+				}
+				regions.push(rr);
+			}
+			option.geo.regions = regions;
+		    // 使用刚指定的配置项和数据显示图表。
+		    myChart.setOption(option);
+
+		    $("#cityname").html("广西");
+
+    }
+
+ 	var provinceArray = new Array();
+ 	provinceArray.push("广西");
+ 	provinceArray.push("上海");
+ 	provinceArray.push("北京");
+ 	provinceArray.push("广东");
+ 	reflushMap(provinceArray);
+   
+</script>
+</body>
+</html>
