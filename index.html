@@ -4,14 +4,18 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title></title>
 	<!-- 引入 ECharts 文件 -->
-    <script src="js/echarts.js"></script>
+    <script src="js/echarts.min.js"></script>
     <script src="js/china.js"></script>
     <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/province_city.json"></script>
 </head>
 <body style="padding: 0;margin: 0;">
-<div  id="main1" style="width: 100%;height:100%;background: url('images/bg.png');background-repeat:no-repeat; background-position: center center;background-size: cover;">
-	<center><div style="color: #fff;font-size: 30pt;padding-top: 80px">踏足中国
-		<span style="color: #fac72d;font-size: 40pt; ">5</span>个省市</div></center>
+<div  id="main1" style="width: 100%;height:auto;background: url('images/bg.png');background-repeat:no-repeat; background-position: center center;background-size: cover;">
+	<center>
+		<div style="color: #fff;font-size: 40pt;padding-top: 80px">踏足中国
+			<span style="color: #fac72d;font-size: 60pt;font-weight: 900 " id="citycount">0</span>个省份
+		</div>
+	</center>
 
 	<div id="main" style="width: 900px;height:700px;margin-top: -10px;"></div>
 
@@ -25,7 +29,7 @@
     var h = document.documentElement.clientHeight || document.body.clientHeight;
     $("#main").css({
     	"width": w + "px",
-    	"height": (h-h/2) + "px"
+    	"height": (w - w/7) + "px"
     });
     $("#main1").css({
     	"width": w + "px",
@@ -33,7 +37,7 @@
     });
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));
-     function reflushMap(provinceArray) {
+     function reflushMap(cityArray) {
     	   // 指定图表的配置项和数据
 		    var option = {
 			    title : {
@@ -57,21 +61,45 @@
 			                borderWidth: 1
 			            },
 			            emphasis: {
-			                areaColor: '#a19fa2'
+			                areaColor: '#fac72d'
 			            }
 			        },
 			        regions: []
 			    }
 			};
+			var ctiyToProvince = {};
+			for (var i = 0; i < province_city.provinces.length; i++) {
+				// console.log(province_city.provinces[i].provinceName);
+				var citys = province_city.provinces[i].citys;
+				for (var a = 0; a < citys.length; a++) {
+					ctiyToProvince[citys[a].citysName.replace("市","")] = province_city.provinces[i].provinceName;
+				}
+			}
+			// console.log(ctiyToProvince)  
+			// ctiyToProvince是以市为Key，值是省份的结构
+			
+			var hadGoneCity = {};
+			for (var i = 0; i < cityArray.length; i++) {
+				var pp = ctiyToProvince[cityArray[i]]
+				if(pp == null) {
+					//hadGoneCity[pp] = new Array();
+				}else{
+					if(hadGoneCity[pp]==null) {
+						hadGoneCity[pp]=new Array();
+					}
+					hadGoneCity[pp].push(cityArray[i]);
+				}
+			}
 
 			var regions = new Array();
-			for (var i = 0; i < provinceArray.length; i++) {
+			for(var p in hadGoneCity){
 				var rr = {
-				    name: provinceArray[i],
+				    name: p ,
 				    itemStyle: {
 				        areaColor: '#fac72d',
 				        color: '#fac72d'
-				    }
+				    },
+				    citys:hadGoneCity[p]
 				}
 				regions.push(rr);
 			}
@@ -79,16 +107,40 @@
 		    // 使用刚指定的配置项和数据显示图表。
 		    myChart.setOption(option);
 
-		    $("#cityname").html("广西");
+		    var str = "";
+		    for(var ss in hadGoneCity) {
+		    	if(ss!=null && hadGoneCity[ss]!=null){
+		    		str += hadGoneCity[ss].join(" ") + " ";
+		    	}
+		    	$("#cityname").html(str);
+		    }
+
+		    $("#citycount").html(regions.length);
+		    // var regions = option.geo.regions;
+		    myChart.on('mouseover', function (params) {
+		    	// console.log(params.region)
+		    	var citys = params.region.citys;
+		    	var str = "";
+		    	if(citys != null) {
+		    		str = citys.join(" ");
+		    	}
+		    	$("#cityname").html(str);
+			    // console.log(regions);
+			});
 
     }
 
- 	var provinceArray = new Array();
- 	provinceArray.push("广西");
- 	provinceArray.push("上海");
- 	provinceArray.push("北京");
- 	provinceArray.push("广东");
- 	reflushMap(provinceArray);
+ 	var cityArray = new Array();
+ 	cityArray.push("武汉");
+ 	cityArray.push("南宁");
+ 	cityArray.push("柳州");
+ 	cityArray.push("北海");
+ 	cityArray.push("桂林");
+ 	cityArray.push("广西");
+ 	cityArray.push("上海");
+ 	cityArray.push("北京");
+ 	cityArray.push("深圳");
+ 	reflushMap(cityArray);
    
 </script>
 </body>
