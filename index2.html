@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title></title>
+	<!-- 引入 ECharts 文件 -->
+    <script src="js/echarts.min.js"></script>
+    <script src="js/china.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/guangxi.js"></script>
+    
+</head>
+<body style="padding: 0;margin: 0;">
+<div  id="main1" style="width: 100%;height:auto;background: url('images/bg.png');background-repeat:no-repeat; background-position: center center;background-size: cover;">
+	<center>
+		<div style="color: #fff;font-size: 40pt;padding-top: 80px">踏足中国
+			<span style="color: #fac72d;font-size: 60pt;font-weight: 900 " id="citycount">0</span>个省份
+		</div>
+	</center>
+
+	<div id="main" style="width: 900px;height:700px;margin-top: -10px;"></div>
+
+	<div id="cityname" style="color: #fff;font-size: 40pt;padding: 0 50px 0 50px" >
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+	var w = document.documentElement.clientWidth || document.body.clientWidth;
+    var h = document.documentElement.clientHeight || document.body.clientHeight;
+    $("#main").css({
+    	"width": w + "px",
+    	"height": (w - w/7) + "px"
+    });
+    $("#main1").css({
+    	"width": w + "px",
+    	"height": h + "px"
+    });
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+     function reflushMap() {
+    	   // 指定图表的配置项和数据
+		    var option = {
+			    series: [
+		            {
+		                name: '香港18区人口密度',
+		                type: 'map',
+		                mapType: 'china', // 自定义扩展图表类型
+		                selectedMode: 'single', 
+		                itemStyle:{
+		                    normal:{label:{show:true}},
+		                    emphasis:{label:{show:true}}
+		                }
+		           
+		            }
+		        ]
+			};
+		    myChart.setOption(option);
+		    myChart.on('mapselectchanged', function (params) {
+		  		console.log(params)
+		    	var name = params.batch[0].name;
+		    	if(name == "广西") {
+		    		option.series[0].mapType="广西";
+		    		myChart.setOption(option);
+		    	}
+			});
+
+    }
+
+ 	reflushMap();
+   
+</script>
+</body>
+</html>
